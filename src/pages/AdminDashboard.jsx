@@ -5,10 +5,16 @@ const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [showCompleted, setShowCompleted] = useState(false);
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [selectedNote, setSelectedNote] = useState(null); // Estado para el modal
+  const [loading, setLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    fetchAppointments();
+  }, [showCompleted]); // Se ejecuta cuando cambia showCompleted
+
+  const fetchAppointments = async () => {
+    setLoading(true);
+    try {
       let query = supabase
         .from("appointments")
         .select("*")
@@ -20,18 +26,33 @@ const AdminDashboard = () => {
 
       const { data, error } = await query;
 
-      if (error) {
-        setFetchError("No se pudieron obtener las citas.");
-        setAppointments(null);
-      }
-      if (data) {
-        setAppointments(data);
-        setFetchError(null);
-      }
-    };
+      if (error) throw error;
+      setAppointments(data);
+      setFetchError(null);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      setFetchError("No se pudieron obtener las citas.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchAppointments();
-  }, [showCompleted]);
+  const handleCompleteChange = async (appointmentId, currentCompleted) => {
+    try {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ completed: !currentCompleted })
+        .eq("id", appointmentId);
+
+      if (error) throw error;
+
+      // Recargar la lista después de actualizar la cita
+      fetchAppointments();
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      setFetchError("No se pudo actualizar la cita.");
+    }
+  };
 
   return (
     <section className="py-12 bg-white">
@@ -58,59 +79,72 @@ const AdminDashboard = () => {
         </h3>
         {fetchError && <p className="text-center text-red-500 mb-4">{fetchError}</p>}
 
-        {appointments && appointments.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300 bg-white shadow-lg rounded-xl overflow-hidden">
-              <thead className="bg-gradient-to-r from-blue-500 to-blue-700 text-white border-b-2 border-gray-300">
-                <tr>
-                  {["ID", "Paciente", "Contacto", "Emergencia", "Fecha", "Hora", "Notas", "Completada", "Creada"].map(
-                    (header, index) => (
-                      <th key={index} className="px-6 py-3 text-left text-sm font-semibold uppercase border-r border-gray-400 last:border-r-0">
-                        {header}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {appointments.map((appointment) => (
-                  <tr key={appointment.id} className="hover:bg-gray-100 transition-all">
-                    <td className="px-6 py-4 text-gray-700 font-medium border-r border-gray-300">{appointment.id}</td>
-                    <td className="px-6 py-4 border-r border-gray-300">{appointment.patient_name}</td>
-                    <td className="px-6 py-4 border-r border-gray-300">{appointment.contact_info}</td>
-                    <td className="px-6 py-4 border-r border-gray-300">{appointment.emergency_type}</td>
-                    <td className="px-6 py-4 border-r border-gray-300">{new Date(appointment.preferred_date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 border-r border-gray-300">{appointment.preferred_time}</td>
-                    <td className="px-6 py-4 border-r border-gray-300 text-center">
-                      <button
-                        className="text-blue-600 hover:underline"
-                        onClick={() => setSelectedNote(appointment.additional_notes)}
-                      >
-                        Ver Nota
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-center border-r border-gray-300">
-                      <input
-                        type="checkbox"
-                        className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        checked={appointment.completed}
-                        onChange={() => {}}
-                      />
-                    </td>
-                    <td className="px-6 py-4">{new Date(appointment.created_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {/* Indicador de carga */}
+        {loading ? (
+          <p className="text-center text-blue-600">Cargando citas...</p>
         ) : (
-          <p className="text-center">No hay citas agendadas.</p>
+          <>
+            {appointments && appointments.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full border border-gray-300 bg-white shadow-lg rounded-xl overflow-hidden">
+                  <thead className="bg-gradient-to-r from-blue-500 to-blue-700 text-white border-b-2 border-gray-300">
+                    <tr>
+                      {["ID", "Paciente", "Contacto", "Emergencia", "Fecha", "Hora", "Notas", "Completada", "Creada"].map(
+                        (header, index) => (
+                          <th key={index} className="px-6 py-3 text-left text-sm font-semibold uppercase border-r border-gray-400 last:border-r-0">
+                            {header}
+                          </th>
+                        )
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {appointments.map((appointment) => (
+                      <tr key={appointment.id} className="hover:bg-gray-100 transition-all">
+                        <td className="px-6 py-4 text-gray-700 font-medium border-r border-gray-300">{appointment.id}</td>
+                        <td className="px-6 py-4 border-r border-gray-300">{appointment.patient_name}</td>
+                        <td className="px-6 py-4 border-r border-gray-300">{appointment.contact_info}</td>
+                        <td className="px-6 py-4 border-r border-gray-300">{appointment.emergency_type}</td>
+                        <td className="px-6 py-4 border-r border-gray-300">{new Date(appointment.preferred_date).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 border-r border-gray-300">{appointment.preferred_time}</td>
+                        <td className="px-6 py-4 border-r border-gray-300 text-center">
+                          <button
+                            className="text-blue-600 hover:underline"
+                            onClick={() => setSelectedNote(appointment.additional_notes)}
+                          >
+                            Ver Nota
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 text-center border-r border-gray-300">
+                          <input
+                            type="checkbox"
+                            className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            checked={appointment.completed}
+                            onChange={() => handleCompleteChange(appointment.id, appointment.completed)}
+                          />
+                        </td>
+                        <td className="px-6 py-4">{new Date(appointment.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center">No hay citas agendadas.</p>
+            )}
+          </>
         )}
 
-        {/* Modal de Notas con Animación desde Abajo */}
+        {/* Modal de Notas */}
         {selectedNote && (
-          <div className="fixed inset-0 bg-gray-500/60 flex items-center justify-center z-50 transition-all duration-300 ease-in-out">
-            <div className="bg-white p-6 rounded-2xl shadow-lg max-w-lg w-full transform translate-y-full scale-95 animate-slide-up">
+          <div
+            className="fixed inset-0 bg-gray-500/50 flex items-center justify-center z-50"
+            onClick={() => setSelectedNote(null)}
+          >
+            <div
+              className="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full relative animate-fade-in"
+              onClick={(e) => e.stopPropagation()} // Evitar cerrar al hacer clic dentro del modal
+            >
               <h3 className="text-xl font-semibold mb-4 text-blue-600">Nota de la Cita</h3>
               <p className="text-gray-700">{selectedNote}</p>
               <button

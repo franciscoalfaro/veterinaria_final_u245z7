@@ -85,9 +85,9 @@ function App() {
 
           {isLoggedIn && userRole === 'admin' && (
             <>
-              <Link to="/admin" className="hover:underline">Dashboard</Link>
-              <Link to="/services" className="hover:underline">Services</Link>
-              <Link to="/information" className="hover:underline" >Information</Link>
+              <Link to="/admin" className="hover:underline">Panel</Link>
+              <Link to="/services" className="hover:underline">Servicios</Link>
+              <Link to="/information" className="hover:underline" >Informacion</Link>
               <button onClick={handleLogout} className="hover:underline">Cerrar Sesión</button>
             </>
           )}
@@ -117,9 +117,9 @@ function App() {
 
           {isLoggedIn && userRole === 'admin' && (
             <>
-              <li><Link to="/admin" onClick={toggleSidebar}>Admin Dashboard</Link></li>
-              <li><Link to="/services" onClick={toggleSidebar}>Services</Link></li>
-              <li><Link to="/information" onClick={toggleSidebar}>Information</Link></li>
+              <li><Link to="/admin" onClick={toggleSidebar}>Panel</Link></li>
+              <li><Link to="/services" onClick={toggleSidebar}>Servicios</Link></li>
+              <li><Link to="/information" onClick={toggleSidebar}>Informacion</Link></li>
               <li><button onClick={() => { handleLogout(); toggleSidebar(); }}>Cerrar Sesión</button></li>
             </>
           )}
@@ -127,7 +127,7 @@ function App() {
           {!isLoggedIn && (
             <>
               <li><Link to="/login" onClick={toggleSidebar}>Login</Link></li>
-              <li><Link to="/register" onClick={toggleSidebar}>Register</Link></li>
+              <li><Link to="/register" onClick={toggleSidebar}>Registro</Link></li>
             </>
           )}
         </ul>

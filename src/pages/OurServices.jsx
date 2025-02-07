@@ -45,9 +45,10 @@ function OurServices() {
                 <p className="text-gray-600 mb-4">{service.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-gray-700">${service.price}</span>
+                  {/* 
                   <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Consultar
-                  </button>
+                  </button>*/}
                 </div>
               </div>
             ))}
