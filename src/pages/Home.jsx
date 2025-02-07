@@ -7,7 +7,7 @@ function Home() {
   return (
     <div>
       <div className="relative h-[500px] w-full overflow-hidden">
-        <img src="https://facultades.unab.cl/cienciasdelavida/wp-content/uploads/2022/02/Medicina-Veterinaria.webp"
+        <img src="/imagenes/veterinaria.webp"
           alt="Veterinaria Banner" className="object-cover w-full h-full" />
         <div className="absolute inset-0 bg-sky-500/40 flex items-center justify-center">
           <div className="text-center space-y-4 px-4">

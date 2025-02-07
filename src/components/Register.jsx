@@ -98,7 +98,7 @@ const Register = () => {
               </form>
             </div>
             <div className="md:w-96 flex-shrink-0">
-              <img className="h-full w-full object-cover" src="https://images.pexels.com/photos/716398/pexels-photo-716398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Register Pet" />
+              <img className="h-full w-full object-cover" src="/public/imagenes/register.webp" alt="Register Pet" />
             </div>
           </div>
         </div>
