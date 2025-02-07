@@ -37,7 +37,6 @@ const ServiceCreator = () => {
     const formattedPrice = parseFloat(price.replace(/[^0-9.-]+/g, ""));
 
     if (editingService) {
-      // Editar servicio existente
       const { error } = await supabase
         .from("services")
         .update({ name: typeService, description, price: formattedPrice, icon })
@@ -50,7 +49,6 @@ const ServiceCreator = () => {
         setEditingService(null);
       }
     } else {
-      // Crear nuevo servicio
       const { error } = await supabase
         .from("services")
         .insert([{ name: typeService, description, price: formattedPrice, icon }]);
@@ -89,7 +87,7 @@ const ServiceCreator = () => {
   return (
     <section className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg">
-      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
+        <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
           Panel de Administración
         </h2>
         <h2 className="text-2xl font-semibold text-center text-blue-600 mb-6">
@@ -144,22 +142,21 @@ const ServiceCreator = () => {
       </div>
 
       {/* Lista de Servicios */}
-      <div className="mt-10 w-full max-w-3xl bg-white p-6 rounded-xl shadow-lg">
+      <div className="mt-10 w-full max-w-5xl bg-white p-6 rounded-xl shadow-lg">
         <h3 className="text-xl font-semibold text-center text-gray-700 mb-4">Servicios Creados</h3>
         {services.length === 0 ? (
           <p className="text-center text-gray-500">No hay servicios creados.</p>
         ) : (
-          <ul className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
-              <li key={service.id} className="flex justify-between items-center p-4 border rounded-md">
-                <div>
-                  <p className="font-semibold">
-                    {service.icon} {service.name}
-                  </p>
-                  <p className="text-gray-500">{service.description}</p>
-                  <p className="text-blue-600 font-bold">${service.price.toLocaleString()}</p>
+              <div key={service.id} className="p-4 border rounded-lg shadow-md bg-gray-50">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{service.icon}</span>
+                  <h4 className="font-semibold text-lg">{service.name}</h4>
                 </div>
-                <div className="flex gap-2">
+                <p className="text-gray-500">{service.description}</p>
+                <p className="text-blue-600 font-bold mt-2">${service.price.toLocaleString()}</p>
+                <div className="flex justify-between mt-4">
                   <button
                     onClick={() => handleEdit(service)}
                     className="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
@@ -173,9 +170,9 @@ const ServiceCreator = () => {
                     🗑️ Eliminar
                   </button>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </section>

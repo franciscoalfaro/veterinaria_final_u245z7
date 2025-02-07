@@ -10,12 +10,21 @@ import AdminDashboard from "./pages/AdminDashboard";
 import supabase from './supabaseClient';
 import { AuthProvider, AuthContext } from './context/AuthContext'; // Import AuthProvider and AuthContext
 import ServiceCreator from "./components/ServiceCreator";
+import Information from "./pages/Information";
+import Footer from "./components/Footer";
 
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn, userRole, logout } = useContext(AuthContext); // Use AuthContext
+  const [contactInfo, setContactInfo] = useState(null);
+  const [businessHours, setBusinessHours] = useState([]);
+  const [socialNetworks, setSocialNetworks] = useState([]);
+
+  useEffect(() => {
+    fetchFooterData();
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -23,6 +32,18 @@ function App() {
 
   const handleLogout = () => {
     logout(); // Call logout function from AuthContext
+  };
+
+
+  const fetchFooterData = async () => {
+    const { data: infoData } = await supabase.from('information').select('*').single();
+    setContactInfo(infoData);
+
+    const { data: hoursData } = await supabase.from('business_hours').select('*');
+    setBusinessHours(hoursData);
+
+    const { data: socialData } = await supabase.from('social_network').select('*');
+    setSocialNetworks(socialData);
   };
 
 
@@ -64,8 +85,9 @@ function App() {
 
           {isLoggedIn && userRole === 'admin' && (
             <>
-              <Link to="/admin" className="hover:underline">Admin Dashboard</Link>
+              <Link to="/admin" className="hover:underline">Dashboard</Link>
               <Link to="/services" className="hover:underline">Services</Link>
+              <Link to="/information" className="hover:underline" >Information</Link>
               <button onClick={handleLogout} className="hover:underline">Cerrar Sesión</button>
             </>
           )}
@@ -97,6 +119,7 @@ function App() {
             <>
               <li><Link to="/admin" onClick={toggleSidebar}>Admin Dashboard</Link></li>
               <li><Link to="/services" onClick={toggleSidebar}>Services</Link></li>
+              <li><Link to="/information" onClick={toggleSidebar}>Information</Link></li>
               <li><button onClick={() => { handleLogout(); toggleSidebar(); }}>Cerrar Sesión</button></li>
             </>
           )}
@@ -119,65 +142,14 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/information" element={isLoggedIn && userRole === 'admin' ? <Information /> : <Login />} />
           <Route path="/services" element={isLoggedIn && userRole === 'admin' ? <ServiceCreator /> : <Login />} />
           <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login />} /> {/* Protect AdminDashboard route */}
         </Routes>
       </div>
 
       {/* Footer */}
-      <footer className="bg-sky-500 text-white p-8 mt-8">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Veterinaria</h4>
-            <p className="text-sm text-gray-300">
-              Calle Principal #123<br />
-              Ciudad, País
-            </p>
-            <p className="text-sm text-gray-300 mt-2">
-              Email: info@veterinaria.com<br />
-              Teléfono: +123-456-7890
-            </p>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Navegación</h4>
-            <ul className="space-y-2">
-              <li><Link to="/" className="hover:text-gray-100">Inicio</Link></li>
-              <li><Link to="/about" className="hover:text-gray-100">Sobre Nosotros</Link></li>
-              <li><Link to="/services" className="hover:text-gray-100">Servicios</Link></li>
-              <li><Link to="/appointment" className="hover:text-gray-100">Agendar Cita</Link></li>
-              <li><Link to="/contact" className="hover:text-gray-100">Contacto</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Horario de Atención</h4>
-            <p className="text-sm text-gray-300">
-              Lunes - Viernes: 9:00 AM - 7:00 PM<br />
-              Sábados: 10:00 AM - 4:00 PM<br />
-              Domingos: Cerrado
-            </p>
-            <div className="flex space-x-4 mt-4">
-              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
-                <i className="fab fa-facebook-f fa-lg"></i>
-              </a>
-              <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
-                <i className="fab fa-twitter fa-lg"></i>
-              </a>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
-                <i className="fab fa-instagram fa-lg"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="container mx-auto mt-8 border-t border-gray-600 pt-4 flex justify-between items-center">
-          <p className="text-sm text-gray-300">
-            &copy; {new Date().getFullYear()} Veterinaria. Todos los derechos reservados.
-          </p>
-          <div className="text-sm text-gray-300 space-x-4">
-            <Link to="/privacy-policy" className="hover:text-gray-100">Política de Privacidad</Link>
-            <Link to="/terms-of-service" className="hover:text-gray-100">Términos de Servicio</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer contactInfo={contactInfo} businessHours={businessHours} socialNetworks={socialNetworks} />
     </div>
   );
 }
