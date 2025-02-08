@@ -68,7 +68,7 @@ const Login = () => {
               </form>
             </div>
             <div className="md:w-64 flex-shrink-0">
-              <img className="h-full w-full object-cover" src="/public/imagenes/clinica.webp" alt="Veterinarian Clinic" />
+              <img className="h-full w-full object-cover" src="/imagenes/clinica.webp" alt="Veterinarian Clinic" />
             </div>
           </div>
         </div>
