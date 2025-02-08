@@ -12,6 +12,7 @@ import { AuthProvider, AuthContext } from './context/AuthContext'; // Import Aut
 import ServiceCreator from "./components/ServiceCreator";
 import Information from "./pages/Information";
 import Footer from "./components/Footer";
+import CommentSection from "./components/CommentSection";
 
 
 function App() {
@@ -91,6 +92,16 @@ function App() {
               <button onClick={handleLogout} className="hover:underline">Cerrar Sesión</button>
             </>
           )}
+
+          {isLoggedIn && userRole === 'user' && (
+            <>
+              <Link to="/comment" className="hover:underline" onClick={toggleSidebar}>Comentar</Link>
+              <button className="hover:underline" onClick={() => { handleLogout(); toggleSidebar(); }}>Cerrar Sesión</button>
+            </>
+          )}
+
+
+
         </div>
 
       </nav>
@@ -124,6 +135,13 @@ function App() {
             </>
           )}
 
+          {isLoggedIn && userRole === 'user' && (
+            <>
+              <li><Link to="/comment" onClick={toggleSidebar}>Comentar</Link></li>
+              <li><button onClick={() => { handleLogout(); toggleSidebar(); }}>Cerrar Sesión</button></li>
+            </>
+          )}
+
           {!isLoggedIn && (
             <>
               <li><Link to="/login" onClick={toggleSidebar}>Login</Link></li>
@@ -142,6 +160,8 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/comment" element={isLoggedIn && userRole === 'user' ? <CommentSection /> : <Login />} />
+
           <Route path="/information" element={isLoggedIn && userRole === 'admin' ? <Information /> : <Login />} />
           <Route path="/services" element={isLoggedIn && userRole === 'admin' ? <ServiceCreator /> : <Login />} />
           <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login />} /> {/* Protect AdminDashboard route */}

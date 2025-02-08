@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = ({ contactInfo, businessHours, socialNetworks }) => {
-    console.log('socialNetworks', socialNetworks)
     return (
         <footer className="bg-sky-500 text-white p-8">
             <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">

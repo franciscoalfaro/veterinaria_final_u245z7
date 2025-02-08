@@ -6,7 +6,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(null);
-  const { login } = useContext(AuthContext);
+  const { login, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -14,8 +14,14 @@ const Login = () => {
     setLoginError(null);
 
     const result = await login(username, password);
+    console.log(result)
+
     if (result.success) {
-      navigate('/admin', { replace: true });
+      if (result.success.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else if (result.success.role === 'user') {
+        navigate('/comment', { replace: true });
+      }
     } else {
       setLoginError(result.error);
     }

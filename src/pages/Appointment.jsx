@@ -37,11 +37,9 @@ function Appointment() {
       ]);
 
     if (error) {
-      console.error("Error al enviar la cita:", error);
       setSubmissionError('No se pudo agendar la cita. Por favor, inténtalo de nuevo.');
       setSubmissionSuccess(null); // Ensure success message is cleared on error
     } else {
-      console.log("Cita enviada correctamente:", data);
       setSubmissionSuccess('Cita agendada correctamente!'); // Set success message
       setSubmissionError(null); // Clear any previous errors
       // Reset form fields

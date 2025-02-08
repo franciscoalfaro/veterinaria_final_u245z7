@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AboutUs from "./AboutUs";
 import OurServices from "./OurServices";
+import ListComment from "../components/ListComment";
 
 function Home() {
   return (
@@ -45,6 +46,12 @@ function Home() {
           </div>
         </div>
       </section>
+
+   
+
+      <ListComment></ListComment>
+   
+
     </div>
   );
 }

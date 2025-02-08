@@ -8,6 +8,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +20,7 @@ export const AuthProvider = ({ children }) => {
       if (session && session.isLoggedIn) {
         setIsLoggedIn(session.isLoggedIn);
         setUserRole(session.userRole);
+        setUserId(session.userId)
       }
     }
   }, []);
@@ -38,11 +41,14 @@ export const AuthProvider = ({ children }) => {
         if (user.password === hashedPassword) {
           setIsLoggedIn(true);
           setUserRole(user.role);
+          setUserId(user.id)
 
           // Store session in localStorage
-          localStorage.setItem('supabaseSession', JSON.stringify({ isLoggedIn: true, userRole: user.role }));
+          localStorage.setItem('supabaseSession', JSON.stringify({ isLoggedIn: true, userRole: user.role, userId:user.id }));
 
-          return { success: true };
+          const { password, ...newData } = user;
+
+          return { success: newData};
         } else {
           return { success: false, error: 'Contraseña incorrecta.' };
         }
@@ -66,6 +72,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     isLoggedIn,
     userRole,
+    userId,
     login,
     logout,
   };
