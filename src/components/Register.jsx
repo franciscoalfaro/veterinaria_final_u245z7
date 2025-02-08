@@ -13,21 +13,39 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     setRegistrationError(null);
-
+  
+    if (role === 'admin') {
+      // Verificar si ya existe un admin
+      const { data: adminExists, error: adminError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'admin')
+        .single();
+  
+      if (adminExists) {
+        setRegistrationError('No posees permisos para registrarte como administrador.');
+        return;
+      }
+  
+      if (adminError && adminError.code !== 'PGRST116') {
+        console.error('Error verificando administrador:', adminError);
+        setRegistrationError('Error al verificar administrador.');
+        return;
+      }
+    }
+  
     const hashedPassword = CryptoJS.SHA256(password).toString();
-
+  
     try {
       const { data, error } = await supabase
         .from('users')
-        .insert([
-          { username: username, password: hashedPassword, role: role }
-        ]);
-
+        .insert([{ username, password: hashedPassword, role }]);
+  
       if (error) {
         setRegistrationError('Error al registrar usuario.');
         console.error('Registration error:', error);
       } else {
-        console.log('Registration successful:', data);
+        console.log('Registro exitoso:', data);
         alert('Registro exitoso!');
         navigate('/login');
       }
@@ -36,6 +54,7 @@ const Register = () => {
       console.error('Registration error:', error);
     }
   };
+  
 
   return (
     <section className="bg-gray-100 py-16 flex justify-center items-center min-h-screen">
