@@ -1,6 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.message) {
+      setStatus("Por favor, completa todos los campos.");
+      return;
+    }
+
+    const serviceID = import.meta.env.VITE_EMAIL_SERVICE;
+    const templateID = import.meta.env.VITE_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_PUBLIC_KEY;
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message,
+    };
+
+    emailjs
+      .send(serviceID, templateID, templateParams, publicKey)
+      .then(() => {
+        setStatus("Mensaje enviado con éxito.");
+        setFormData({ name: "", email: "", message: "" });
+      })
+      .catch(() => setStatus("Error al enviar el mensaje, inténtalo de nuevo."));
+  };
+
   return (
     <section className="bg-gray-50 py-24 flex justify-center items-center min-h-screen">
       <div className="container mx-auto px-4">
@@ -9,7 +49,7 @@ function Contact() {
             <div className="md:w-1/2 flex-shrink-0">
               <img
                 className="h-full w-full object-cover"
-                src="https://images.pexels.com/photos/3771667/pexels-photo-3771667.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                src="/imagenes/contacto.webp"
                 alt="Contact Us at Veterinaria"
               />
             </div>
@@ -18,7 +58,7 @@ function Contact() {
               <p className="mt-2 text-base md:text-lg text-gray-700 mb-8">
                 Nuestro equipo está listo para responder a tus preguntas y ayudarte en lo que necesites. ¡Escríbenos!
               </p>
-              <form className="mt-8 space-y-6">
+              <form className="mt-8 space-y-6" onSubmit={sendEmail}>
                 <div>
                   <label htmlFor="name" className="block text-gray-700 text-sm font-semibold mb-2">
                     Nombre Completo
@@ -26,8 +66,10 @@ function Contact() {
                   <input
                     type="text"
                     id="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     placeholder="Tu nombre y apellido"
-                    className="shadow-md appearance-none border rounded w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow-md border rounded w-full py-2.5 px-4 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </div>
                 <div>
@@ -37,8 +79,10 @@ function Contact() {
                   <input
                     type="email"
                     id="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="Tu dirección de correo electrónico"
-                    className="shadow-md appearance-none border rounded w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow-md border rounded w-full py-2.5 px-4 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </div>
                 <div>
@@ -47,11 +91,14 @@ function Contact() {
                   </label>
                   <textarea
                     id="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     placeholder="¿Cómo podemos ayudarte?"
                     rows="4"
-                    className="shadow-md appearance-none border rounded w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow-md border rounded w-full py-2.5 px-4 text-gray-700 focus:outline-none focus:shadow-outline"
                   />
                 </div>
+                {status && <p className="text-center text-sm font-semibold text-red-500">{status}</p>}
                 <div className="flex justify-start">
                   <button
                     type="submit"
