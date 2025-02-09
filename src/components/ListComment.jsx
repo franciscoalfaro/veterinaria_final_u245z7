@@ -25,7 +25,7 @@ const ListComment = () => {
       setError("Error al cargar los comentarios.");
     } else {
       setComments(data);
-      setTotalPages(Math.ceil(count / commentsPerPage)); 
+      setTotalPages(Math.ceil(count / commentsPerPage));
     }
   };
 
@@ -82,25 +82,30 @@ const ListComment = () => {
             </div>
           )}
 
-          {/* Botón de paginación izquierda superpuesto con ícono */}
-          <button
-            onClick={handlePrevPage}
-            disabled={page === 1}
-            className="absolute top-1/2 left-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
-          >
-            <FaArrowLeft /> {/* Ícono de flecha izquierda */}
-          </button>
-          {/* Botón de paginación derecha superpuesto con ícono */}
-          <button
-            onClick={handleNextPage}
-            disabled={page === totalPages}
-            className="absolute top-1/2 right-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
-          >
-            <FaArrowRight /> {/* Ícono de flecha derecha */}
-          </button>
+
+          {comments.length === 0 ? (
+            ''
+          ) : (
+            <>
+              < button onClick={handlePrevPage} disabled={page === 1}
+                className="absolute top-1/2 left-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
+              >
+                <FaArrowLeft /> 
+              </button>
+
+              <button onClick={handleNextPage} disabled={page === totalPages}
+                className="absolute top-1/2 right-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
+              >
+                <FaArrowRight />
+              </button>
+
+            </>
+
+          )}
+
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 
