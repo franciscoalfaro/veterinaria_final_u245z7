@@ -6,6 +6,7 @@ import CryptoJS from 'crypto-js';
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [role, setRole] = useState('user');
   const [registrationError, setRegistrationError] = useState(null);
   const [successRegistration, setSuccessRegistration] = useState(null)
@@ -40,7 +41,7 @@ const Register = () => {
     try {
       const { data, error } = await supabase
         .from('users')
-        .insert([{ username, password: hashedPassword, role }]);
+        .insert([{ username, password: hashedPassword,email, role }]);
   
       if (error) {
         setRegistrationError('Error al registrar usuario.');
@@ -76,27 +77,21 @@ const Register = () => {
               <form onSubmit={handleRegister} className="mt-8 space-y-6">
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Usuario</label>
-                  <input
-                    id="username"
-                    type="text"
-                    placeholder="Elige un usuario único"
+                  <input id="username" type="text" placeholder="Elige un usuario único"
                     className="shadow-md appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                  />
+                    value={username} onChange={(e) => setUsername(e.target.value)} required />
+                </div>
+                <div>
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
+                  <input id="email" type="text" placeholder="Elige un email único"
+                    className="shadow-md appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Contraseña</label>
-                  <input
-                    id="password"
-                    type="password"
-                    placeholder="Crea una contraseña segura"
+                  <input  id="password" type="password"  placeholder="Crea una contraseña segura"
                     className="shadow-md appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                    value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">Rol</label>
