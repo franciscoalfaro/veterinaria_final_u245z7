@@ -38,16 +38,18 @@ const Footer = ({ contactInfo, businessHours, socialNetworks }) => {
                             </li>
                         ))}
 
-                        {socialNetworks && socialNetworks.map(social => (
-                            <a key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
-                                {social.name_social === 'facebook' && <i className="fab fa-facebook-f fa-lg"></i>}
-                                {social.name_social === 'twitter' && <i className="fab fa-twitter fa-lg"></i>}
-                                {social.name_social === 'instagram' && <i className="fab fa-instagram fa-lg"></i>}
-                                {/* Add icons for other social networks if needed */}
-                            </a>
-                        ))}
+                        <div className="flex space-x-4 mt-4">
+                            {socialNetworks && socialNetworks.map(social => (
+                                <a key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                                    {social.name_social === 'facebook' && <i className="fab fa-facebook-f fa-lg"></i>}
+                                    {social.name_social === 'twitter' && <i className="fab fa-twitter fa-lg"></i>}
+                                    {social.name_social === 'instagram' && <i className="fab fa-instagram fa-lg"></i>}
+                                    {social.name_social === 'whatsapp' && <i className="fab fa-whatsapp fa-lg"></i>}
+                                    {/* Agregar iconos para otras redes sociales si es necesario */}
+                                </a>
+                            ))}
+                        </div>
                     </ul>
-
                 </div>
             </div>
             <div className="container mx-auto mt-8 border-t border-gray-600 pt-4 flex justify-between items-center">
@@ -64,4 +66,3 @@ const Footer = ({ contactInfo, businessHours, socialNetworks }) => {
 };
 
 export default Footer;
-

@@ -13,6 +13,7 @@ import ServiceCreator from "./components/ServiceCreator";
 import Information from "./pages/Information";
 import Footer from "./components/Footer";
 import CommentSection from "./components/CommentSection";
+import  Error  from "./pages/Error";
 
 
 function App() {
@@ -165,6 +166,10 @@ function App() {
           <Route path="/information" element={isLoggedIn && userRole === 'admin' ? <Information /> : <Login />} />
           <Route path="/services" element={isLoggedIn && userRole === 'admin' ? <ServiceCreator /> : <Login />} />
           <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login />} /> {/* Protect AdminDashboard route */}
+
+          {/* agregar una ruta de error */}
+          <Route path='*' element={<Error></Error>}></Route>
+
         </Routes>
       </div>
 

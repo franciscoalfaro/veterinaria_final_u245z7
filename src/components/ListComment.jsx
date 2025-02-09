@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../supabaseClient';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';  // Importamos los íconos de React Icons
 
 const ListComment = () => {
   const [comments, setComments] = useState([]);
@@ -81,21 +82,21 @@ const ListComment = () => {
             </div>
           )}
 
-          {/* Botón de paginación izquierda superpuesto */}
+          {/* Botón de paginación izquierda superpuesto con ícono */}
           <button
             onClick={handlePrevPage}
             disabled={page === 1}
-            className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 z-10"
+            className="absolute top-1/2 left-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
           >
-            ←
+            <FaArrowLeft /> {/* Ícono de flecha izquierda */}
           </button>
-          {/* Botón de paginación derecha superpuesto */}
+          {/* Botón de paginación derecha superpuesto con ícono */}
           <button
             onClick={handleNextPage}
             disabled={page === totalPages}
-            className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 z-10"
+            className="absolute top-1/2 right-0 transform -translate-y-1/2 text-blue-500  p-3 rounded-full hover:bg-blue-100 hover:text-blue-700 z-10"
           >
-            →
+            <FaArrowRight /> {/* Ícono de flecha derecha */}
           </button>
         </div>
       </div>
