@@ -8,6 +8,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [registrationError, setRegistrationError] = useState(null);
+  const [successRegistration, setSuccessRegistration] = useState(null)
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -45,9 +46,13 @@ const Register = () => {
         setRegistrationError('Error al registrar usuario.');
         console.error('Registration error:', error);
       } else {
+        setSuccessRegistration('Registro exitoso')
         console.log('Registro exitoso:', data);
-        alert('Registro exitoso!');
-        navigate('/login');
+        //derivar al login despues de 5seg
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+
       }
     } catch (error) {
       setRegistrationError('Error al registrar usuario.');
@@ -66,6 +71,8 @@ const Register = () => {
               <h2 className="block mt-2 text-3xl leading-tight font-bold text-gray-900">Únete a Nuestra Comunidad</h2>
               <p className="mt-3 text-gray-700">Regístrate y comienza a cuidar de tu mascota con nosotros.</p>
               {registrationError && <p className="text-center text-red-500 mt-3">{registrationError}</p>}
+              {successRegistration && <p className="text-center text-green-500 mt-3">{successRegistration}</p>}
+              
               <form onSubmit={handleRegister} className="mt-8 space-y-6">
                 <div>
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Usuario</label>
