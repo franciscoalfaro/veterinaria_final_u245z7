@@ -14,6 +14,7 @@ import Information from "./pages/Information";
 import Footer from "./components/Footer";
 import CommentSection from "./components/CommentSection";
 import  Error  from "./pages/Error";
+import ChangeImage from "./components/ChangeImage";
 
 
 function App() {
@@ -88,6 +89,7 @@ function App() {
           {isLoggedIn && userRole === 'admin' && (
             <>
               <Link to="/admin" className="hover:underline">Panel</Link>
+              <Link to="/banner" className="hover:underline">Banner</Link>
               <Link to="/services" className="hover:underline">Servicios</Link>
               <Link to="/information" className="hover:underline" >Informacion</Link>
               <button onClick={handleLogout} className="hover:underline">Cerrar Sesión</button>
@@ -130,6 +132,7 @@ function App() {
           {isLoggedIn && userRole === 'admin' && (
             <>
               <li><Link to="/admin" onClick={toggleSidebar}>Panel</Link></li>
+              <li><Link to="/banner" onClick={toggleSidebar}>Banner</Link></li>
               <li><Link to="/services" onClick={toggleSidebar}>Servicios</Link></li>
               <li><Link to="/information" onClick={toggleSidebar}>Informacion</Link></li>
               <li><button onClick={() => { handleLogout(); toggleSidebar(); }}>Cerrar Sesión</button></li>
@@ -162,7 +165,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/comment" element={isLoggedIn && userRole === 'user' ? <CommentSection /> : <Login />} />
-
+          
+          <Route path="/banner" element={isLoggedIn && userRole === 'admin' ? <ChangeImage /> : <Login />} />
           <Route path="/information" element={isLoggedIn && userRole === 'admin' ? <Information /> : <Login />} />
           <Route path="/services" element={isLoggedIn && userRole === 'admin' ? <ServiceCreator /> : <Login />} />
           <Route path="/admin" element={isLoggedIn && userRole === 'admin' ? <AdminDashboard /> : <Login />} /> {/* Protect AdminDashboard route */}
