@@ -90,6 +90,33 @@ const ChangeImage = () => {
     }
   };
 
+  const shortenUrl = (url, maxLength = 35) => {
+    try {
+      const urlObj = new URL(url);
+      let path = urlObj.pathname;
+
+      // Acortar path si es necesario
+      if (path.length > 15) {
+        path = path.substring(0, 5) + '...' + path.substring(path.length - 5);
+      }
+
+      // Construir URL corta
+      let shortUrl = urlObj.hostname.replace(/^www\./, '') + path;
+
+      // Acortar más si aún supera el máximo
+      if (shortUrl.length > maxLength) {
+        shortUrl = shortUrl.substring(0, maxLength - 3) + '...';
+      }
+
+      return shortUrl;
+    } catch {
+      // Si no es una URL válida, devolver original truncada
+      return url.length > maxLength
+        ? url.substring(0, maxLength - 3) + '...'
+        : url;
+    }
+  };
+
   return (
     <section className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       {/* Formulario para crear o editar banner */}
@@ -128,11 +155,10 @@ const ChangeImage = () => {
 
           <button
             type="submit"
-            className={`w-full py-2 text-white font-bold rounded-md transition-all ${
-              editingBanner
+            className={`w-full py-2 text-white font-bold rounded-md transition-all ${editingBanner
                 ? "bg-yellow-500 hover:bg-yellow-600"
                 : "bg-blue-600 hover:bg-blue-700"
-            }`}
+              }`}
           >
             {editingBanner ? "Actualizar Banner" : "Crear Banner"}
           </button>
@@ -142,10 +168,8 @@ const ChangeImage = () => {
       {/* Lista de banners */}
       <div className="w-full max-w-3xl grid grid-cols-1 gap-4">
         {banners.map((banner) => (
-          <div
-            key={banner.id}
-            className="flex items-center justify-between bg-gray-100 p-4 rounded shadow-sm"
-          >
+          <div key={banner.id}
+            className="flex items-center justify-between bg-gray-100 p-4 rounded shadow-sm hover:bg-gray-50 transition-colors">
             <div className="flex items-center">
               {banner.url && (
                 <img
@@ -156,7 +180,13 @@ const ChangeImage = () => {
               )}
               <div>
                 <h4 className="text-lg font-semibold">{banner.name_banner}</h4>
-                <p className="text-blue-600">{banner.url}</p>
+
+                <p
+                  className="text-blue-600 truncate"
+                  title={banner.url} // Mostrar URL completa al hacer hover
+                >
+                  {shortenUrl(banner.url)}
+                </p>
               </div>
             </div>
             <div className="flex space-x-4">

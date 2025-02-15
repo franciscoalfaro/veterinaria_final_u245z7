@@ -16,7 +16,7 @@ const Information = () => {
   const [editingInfo, setEditingInfo] = useState(false); // Track if contact info is being edited
   const [hoursEditing, setHoursEditing] = useState(null); // Track which hour is being edited
   const [socialNetworks, setSocialNetworks] = useState([]);
-  const [newSocial, setNewSocial] = useState({ name_social: "", url: "https://" }); // Initialize URL with https://
+  const [newSocial, setNewSocial] = useState({ name_social: "", url: "" }); // Initialize URL with https://
   const [fetchError, setFetchError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
@@ -136,14 +136,42 @@ const Information = () => {
       setSocialSubmitError("Por favor, completa todos los campos de redes sociales.");
       return;
     }
-    const { error } = await supabase.from("social_network").insert([newSocial]);
+
+    let processedUrl = newSocial.url.trim();
+
+    // Sanitizar y detectar números telefónicos
+    const sanitizedPhone = processedUrl
+      .replace(/[^\d+]/g, '') // Eliminar todo excepto dígitos y +
+      .replace(/^\+/, '+'); // Asegurar que el + esté al inicio
+
+    // Si es un número válido (ej: +123456789)
+    if (sanitizedPhone.startsWith('+') && sanitizedPhone.length > 5) {
+      processedUrl = `https://wa.me/${sanitizedPhone}`;
+    }
+    // Si es un número sin + pero con código de país
+    else if (/^\d{7,}$/.test(sanitizedPhone)) {
+      processedUrl = `https://wa.me/+${sanitizedPhone}`;
+    }
+    // Si es una URL sin protocolo
+    else if (!/^https?:\/\//i.test(processedUrl)) {
+      processedUrl = processedUrl.startsWith("www.")
+        ? `https://${processedUrl}`
+        : `https://www.${processedUrl}`;
+    }
+
+    const socialToAdd = {
+      ...newSocial,
+      url: processedUrl
+    };
+
+    const { error } = await supabase.from("social_network").insert([socialToAdd]);
     if (error) {
       console.error("Error adding social network:", error);
       setSocialSubmitError("Error al añadir red social.");
     } else {
       setSocialSubmitSuccess("Red social añadida con éxito.");
-      setNewSocial({ name_social: "", url: "https://" }); // Reset URL to https://
-      fetchSocialNetworks(); // Refresh social networks to reflect changes
+      setNewSocial({ name_social: "", url: "" });
+      fetchSocialNetworks();
     }
   };
 
@@ -207,12 +235,31 @@ const Information = () => {
 
 
   const handleSocialUrlChange = (e) => {
-    let urlValue = e.target.value;
-    if (!urlValue.startsWith('https://') && !urlValue.startsWith('http://') && urlValue) {
-      urlValue = 'https://' + urlValue;
+    let urlValue = e.target.value.trim();
+
+    if (!urlValue) {
+      setNewSocial({ ...newSocial, url: "" });
+      return;
     }
+
+    // Si el input es un número con prefijo internacional (+)
+    if (/^\+\d+$/.test(urlValue)) {
+      urlValue = `https://wa.me/${urlValue.replace(/\D/g, "")}`; // Remueve caracteres no numéricos excepto '+'
+    }
+    // Si el usuario ingresa www.sitio.com, se le agrega https://
+    else if (urlValue.startsWith("www.")) {
+      urlValue = `https://${urlValue}`;
+    }
+    // Si no tiene un protocolo http/https, se le agrega por defecto
+    else if (!urlValue.startsWith("http://") && !urlValue.startsWith("https://")) {
+      urlValue = `https://${urlValue}`;
+    }
+
     setNewSocial({ ...newSocial, url: urlValue });
   };
+
+
+
 
 
   return (
@@ -435,11 +482,11 @@ const Information = () => {
               onChange={(e) => setNewSocial({ ...newSocial, name_social: e.target.value })}
             />
             <input
-              type="url"
-              placeholder="URL (Ej: https://facebook.com)"
+              type="text"
+              placeholder="URL o teléfono (Ej: +5491145678901)"
               className="w-full p-2 border rounded-md mb-2"
               value={newSocial.url}
-              onChange={handleSocialUrlChange} // Use handleSocialUrlChange
+              onChange={(e) => setNewSocial({ ...newSocial, url: e.target.value })}
             />
             <button
               onClick={handleAddSocial}
