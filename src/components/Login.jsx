@@ -18,9 +18,11 @@ const Login = () => {
 
     if (result.success) {
       if (result.success.role === 'admin') {
-        navigate('/admin', { replace: true });
+        navigate('/banner', { replace: true });
       } else if (result.success.role === 'user') {
         navigate('/comment', { replace: true });
+      }else if (result.success.role === 'veterinario') {
+        navigate('/admin', { replace: true });
       }
     } else {
       setLoginError(result.error);
